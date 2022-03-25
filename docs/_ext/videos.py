@@ -34,10 +34,7 @@ def load_conference_data():
     for f in glob.glob('_data/*.yaml'):
         base = os.path.basename(f)
         base, _ = os.path.splitext(base)
-        # Only consider conference data files that are following the common
-        # naming convention and log everything out as warning.
-        mo = speakers_file_pattern.match(base)
-        if mo:
+        if mo := speakers_file_pattern.match(base):
             year = int(mo.group(1))
             region = mo.group(2)
             if year not in result:
@@ -48,13 +45,12 @@ def load_conference_data():
             for session in result[year][region]['speakers']:
                 normalize_session(session)
                 session['year'] = year
-                session['series'] = u'Write the Docs {}'.format(region.upper())
+                session['series'] = f'Write the Docs {region.upper()}'
                 session['series_slug'] = region
-                session['event'] = u'Write the Docs {} {}'.format(region.upper(), year)
+                session['event'] = f'Write the Docs {region.upper()} {year}'
                 session['path'] = 'conf/{series_slug}/{year}/videos/{slug}'.format(**session)
             continue
-        mo = sessions_file_pattern.match(base)
-        if mo:
+        if mo := sessions_file_pattern.match(base):
             region = mo.group(1)
             year = int(mo.group(2))
             if year not in result:
@@ -65,9 +61,9 @@ def load_conference_data():
             for session in result[year][region]['speakers']:
                 normalize_session(session)
                 session['year'] = year
-                session['series'] = u'Write the Docs {}'.format(region.upper())
+                session['series'] = f'Write the Docs {region.upper()}'
                 session['series_slug'] = region
-                session['event'] = u'Write the Docs {} {}'.format(region.upper(), year)
+                session['event'] = f'Write the Docs {region.upper()} {year}'
                 session['path'] = 'conf/{series_slug}/{year}/videos/{slug}'.format(**session)
             continue
     return result
@@ -116,12 +112,7 @@ def main():
 
     for year, regions in list(conference_data.items()):
         for region, data in list(regions.items()):
-            has_videos = False
-            for speaker in data['speakers']:
-                if speaker.get('youtubeId'):
-                    has_videos = True
-                    break
-
+            has_videos = any(speaker.get('youtubeId') for speaker in data['speakers'])
             if not has_videos:
                 continue
 
@@ -135,7 +126,7 @@ def main():
                 video_slug = generate_video_slug(speaker)
                 video_path = os.path.join(index_path, video_slug)
                 video_content = generate_video_content(speaker, year, region, idx)
-                with io.open(video_path + '.rst', 'w+') as fp:
+                with io.open(f'{video_path}.rst', 'w+') as fp:
                     fp.write(video_content)
 
     return {

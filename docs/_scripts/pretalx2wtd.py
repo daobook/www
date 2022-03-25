@@ -42,13 +42,13 @@ def convert_to_yaml(year, series, series_slug, yaml_output, pretalx_slug):
         print(f'Error: submissions request failed: {submissions.status_code}: {submissions.text}')
         return
 
-    for index, talk in enumerate(submissions.json()['results']):
+    for talk in submissions.json()['results']:
         slug = slugify(talk['title'][:MAX_TITLE_LENGTH_FOR_SLUG] + '-' + talk['speakers'][0]['name'])
         print(f'Processing talk {slug}...')
 
         speaker_info = retrieve_speaker_info([s['code'] for s in talk['speakers']], http_headers, pretalx_slug)
         if not speaker_info:
-            print(f'Error: failed to retrieve info for speaker s["code"]')
+            print('Error: failed to retrieve info for speaker s["code"]')
             return
 
         yamldoc.append(OrderedDict([

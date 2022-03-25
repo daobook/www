@@ -16,11 +16,11 @@ def fix_the_yaml(year, series, slug, yaml_file):
         # print '['+ str(index) + ']' + generate_video_slug(talk)
         talks[index]['year'] = year
         talks[index]['series'] = series
-        talks[index]['event'] = series + ' ' + year
+        talks[index]['event'] = f'{series} {year}'
         talks[index]['series_slug'] = slug
         talks[index]['path'] = 'conf/' + '/'.join([talk['series_slug'], talk['year'], 'videos', generate_video_slug(talk)])
         talks[index]['slug'] = generate_video_slug(talk)
-        # talks[index]['speakers'] =  {'details': '', 'name': talks[index]['name'], 'img_file': slugify(talks[index]['name'])+'.png', 'slug': slugify(talks[index]['name']), 'twitter': '', 'website':''}
+            # talks[index]['speakers'] =  {'details': '', 'name': talks[index]['name'], 'img_file': slugify(talks[index]['name'])+'.png', 'slug': slugify(talks[index]['name']), 'twitter': '', 'website':''}
 
     yaml.safe_dump(talks, open(yaml_file, 'w+'), default_flow_style=False)
 

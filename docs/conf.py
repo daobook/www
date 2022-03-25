@@ -35,8 +35,7 @@ html4_writer = True
 
 # We use these *local* environment variables for private info like free ticket links
 
-cfp_variables = {}
-cfp_variables['upload'] = os.environ.get('WTD_CFP_UPLOAD')
+cfp_variables = {'upload': os.environ.get('WTD_CFP_UPLOAD')}
 cfp_variables['ticket'] = os.environ.get('WTD_CFP_SPEAKER_TICKET')
 cfp_variables['calendly'] = os.environ.get('WTD_CFP_CALENDLY')
 cfp_variables['feedback_form'] = os.environ.get('WTD_CFP_FEEDBACK_FORM')

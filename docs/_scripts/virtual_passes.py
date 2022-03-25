@@ -48,8 +48,9 @@ with open('p2020-orders.csv') as f:
         for p in relevant_passes:
             p['cc'] = email
 
-no_email = [k for k, v in passes.items() if 'email' not in v or 'cc' not in v]
-if no_email:
+if no_email := [
+    k for k, v in passes.items() if 'email' not in v or 'cc' not in v
+]:
     print('ERROR: No email found for: ', no_email)
     sys.exit()
 
@@ -142,5 +143,5 @@ Write the Docs
         # print(result)
 
     except mandrill.Error as e:
-        print('A mandrill error occurred: %s - %s' % (e.__class__, e))
+        print(f'A mandrill error occurred: {e.__class__} - {e}')
         raise

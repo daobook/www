@@ -25,7 +25,7 @@ def generate_video_slug(session):
         return u''
     title = session['title']
     for speaker in session.get('speakers', []):
-        title += '-{}'.format(speaker.get('slug', speaker['name']))
+        title += f"-{speaker.get('slug', speaker['name'])}"
     return slugify(title)
 
 
@@ -38,8 +38,7 @@ def normalize_session(session):
 
     session['slug'] = generate_video_slug(session)
     if 'video' in session and 'youtube.com' in session['video']:
-        mo = youtube_pattern.match(session['video'])
-        if mo:
+        if mo := youtube_pattern.match(session['video']):
             session['youtubeId'] = mo.group(1)
 
 

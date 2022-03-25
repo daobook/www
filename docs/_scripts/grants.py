@@ -89,5 +89,5 @@ Write the Docs
         # print(result)
 
     except mandrill.Error as e:
-        print('A mandrill error occurred: %s - %s' % (e.__class__, e))
+        print(f'A mandrill error occurred: {e.__class__} - {e}')
         raise

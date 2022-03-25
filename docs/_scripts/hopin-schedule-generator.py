@@ -27,15 +27,18 @@ with open('hopin-schedule.csv', 'w') as f:
     csvwriter.writerow(['Start time', 'End time', 'Schedule name', 'Schedule description', 'Segment name', 'Stage name', 'Tags'])
     for day, sessions in data['schedule'].items():
         for session in sessions:
-            start = datetime.strptime(DAYS[day] + ' ' + session['time'] + ' ' + TIMEZONE, HOPIN_TIME_FORMAT)
+            start = datetime.strptime(
+                f'{DAYS[day]} ' + session['time'] + ' ' + TIMEZONE,
+                HOPIN_TIME_FORMAT,
+            )
+
             end = start
             description = ''
             if 'data' in session:
                 end = start + timedelta(minutes=45)
                 description = f'Main stage talk. Full description: https://www.writethedocs.org/conf/{SHORTCODE}/{YEAR}/speakers/#speaker-{session["data"]["speakers"][0]["slug"]}'
             if 'title' in session:
-                match = re.search(r'(\d+) mins', session['title'])
-                if match:
+                if match := re.search(r'(\d+) mins', session['title']):
                     end = start + timedelta(minutes=int(match.group(1)))
 
             csvwriter.writerow([

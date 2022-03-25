@@ -38,7 +38,7 @@ def load_conference_page_context(app, page):
         if year >= 2018:
             shortcode = p.parts[1]
             year_str = str(year)
-            cache_key = 'conference-context-cache-' + shortcode + year_str
+            cache_key = f'conference-context-cache-{shortcode}{year_str}'
             if cache_key in app.config.wtd_cache:
                 return app.config.wtd_cache[cache_key]
             context = load_conference_context_from_yaml(shortcode, year, year_str, page)
@@ -57,22 +57,24 @@ def load_conference_context_from_yaml(shortcode, year, year_str, page):
     """
     data = {}
     if year < 2020:
-        yaml_file = '_data/config-' + shortcode + '-' + year_str + '.yaml'
+        yaml_file = f'_data/config-{shortcode}-{year_str}.yaml'
     else:
-        yaml_file = '_data/' + shortcode + '-' + year_str + '-config.yaml'
+        yaml_file = f'_data/{shortcode}-{year_str}-config.yaml'
     data.update(load_yaml_log_error(page, yaml_file))
 
     if year < 2020 or not data['flagspeakersannounced']:
         return data
 
     session_data = load_yaml_log_error(
-        page, '_data/' + shortcode + '-' + year_str + '-sessions.yaml')
+        page, f'_data/{shortcode}-{year_str}-sessions.yaml'
+    )
+
 
     if not data['flaghasschedule']:
         return data
 
     sessions_by_slug = {speaker['slug']: speaker for speaker in session_data}
-    schedule_yaml_file = '_data/' + shortcode + '-' + year_str + '-schedule.yaml'
+    schedule_yaml_file = f'_data/{shortcode}-{year_str}-schedule.yaml'
     schedule = load_yaml_log_error(page, schedule_yaml_file)
 
     # Do some additional contextual validation that can't be done by a YAML schema validator.
@@ -81,7 +83,7 @@ def load_conference_context_from_yaml(shortcode, year, year_str, page):
         raise Exception('ERROR Missing key "writing_day" while reading schedule from %s' %
                         schedule_yaml_file)
     for day in range(1, data['date']['total_talk_days'] + 1):
-        key = 'talks_day' + str(day)
+        key = f'talks_day{str(day)}'
         if key not in schedule:
             raise Exception('ERROR Missing key "%s" while reading schedule from %s' %
                             (key, schedule_yaml_file))
@@ -121,13 +123,19 @@ def load_conference_context_from_yaml(shortcode, year, year_str, page):
                     slugs_in_schedule.add(slug)
                 except KeyError:
                     raise Exception(
-                        'ERROR: Unable to find details for session %s while rendering page %s' % (slug, page))
+                        f'ERROR: Unable to find details for session {slug} while rendering page {page}'
+                    )
+
             elif 'title' not in schedule_item:
                 raise Exception(
-                    'ERROR: Item %s in schedule rendered for %s has neither a slug nor title' % (schedule_item, page))
+                    f'ERROR: Item {schedule_item} in schedule rendered for {page} has neither a slug nor title'
+                )
 
-    missing_slugs_from_schedule = set(sessions_by_slug.keys()) - slugs_in_schedule
-    if missing_slugs_from_schedule:
+
+    if (
+        missing_slugs_from_schedule := set(sessions_by_slug.keys())
+        - slugs_in_schedule
+    ):
         raise Exception('ERROR: Session slugs were found in the speakers YAML, '
                         'that are missing from the schedule: %s' % missing_slugs_from_schedule)
 
@@ -141,8 +149,7 @@ def load_yaml_log_error(page, yaml_file):
     logging an error if it fails.
     """
     try:
-        yaml_config = load_yaml(yaml_file)
-        return yaml_config
+        return load_yaml(yaml_file)
     except (YAMLError, OSError) as error:
         log.error('Unable to process conference YAML file %s while rendering %s: %s',
                   yaml_file, page, error)
@@ -160,7 +167,7 @@ def speaker_names_display(speakers):
     if len(names) == 1:
         return names[0]
     if len(names) == 2:
-        return '%s and %s' % (names[0], names[1])
+        return f'{names[0]} and {names[1]}'
     return ', '.join(names)
 
 
@@ -217,9 +224,7 @@ def override_template_load_context(app, pagename, templatename, context, doctree
 
 
 def set_html_context(app, docname, source):
-    # Store old context
-    page_context = load_conference_page_context(app, docname)
-    if page_context:
+    if page_context := load_conference_page_context(app, docname):
         app.config.old_html_context = app.config.html_context.copy()
         app.config.html_context.update(page_context)
 

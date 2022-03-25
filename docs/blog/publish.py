@@ -5,7 +5,7 @@ import datetime
 
 now = datetime.datetime.now()
 month = now.strftime('%b').lower()
-dir = "%s/%s/%s/" % (now.year, month, now.day)
+dir = f"{now.year}/{month}/{now.day}/"
 
-os.system('mkdir -p %s' % dir)
+os.system(f'mkdir -p {dir}')
 shutil.copy(sys.argv[1], dir)

@@ -32,10 +32,8 @@ def print_schedule(shortcode, year):
 if __name__ == '__main__':
     description = """Print a conference schedule"""
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument(dest='shortcode', type=str,
-                        help=f'conference shortcode')
-    parser.add_argument(dest='year', type=int,
-                        help=f'conference year')
+    parser.add_argument(dest='shortcode', type=str, help='conference shortcode')
+    parser.add_argument(dest='year', type=int, help='conference year')
     args = parser.parse_args()
 
     print_schedule(args.shortcode, args.year)

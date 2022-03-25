@@ -39,11 +39,11 @@ def load_meetups_by_region():
     for yaml_file in glob.glob('_data/meetups/*.yaml'):
         meetup = load_yaml(yaml_file)
         # Conditionally show the meetup meta data block
-        meetup['has_meta'] = any([(key in meetup) for key in [
-            'organizers',
-            'website',
-            'twitter',
-        ]])
+        meetup['has_meta'] = any(key in meetup for key in [
+                    'organizers',
+                    'website',
+                    'twitter',
+                ])
         if 'meetup' not in meetup:
             raise ExtensionError('Meetup missing `meetup` key: file={0}'.format(
                 yaml_file

@@ -49,7 +49,7 @@ def _rewrite_feed(app, tag):
     )
 
     if not os.path.isfile(feed_path):
-        logger.error('Atom feed does not exist at: {}'.format(feed_path))
+        logger.error(f'Atom feed does not exist at: {feed_path}')
         return
 
     doc = etree.parse(feed_path)
@@ -71,4 +71,4 @@ def _rewrite_feed(app, tag):
 
     with open(rewritten_feed_path, 'wb') as fd:
         doc.write(fd)
-        logger.info('Wrote absolute atom feed to {}'.format(rewritten_feed_path))
+        logger.info(f'Wrote absolute atom feed to {rewritten_feed_path}')

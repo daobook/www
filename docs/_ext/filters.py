@@ -13,7 +13,7 @@ def media_photo(_file, _type):
             ext=ext,
         )
         if os.path.exists(file_name):
-            return '/' + file_name
+            return f'/{file_name}'
     return '/_static/img/speakers/missing.jpg'
 
 
